@@ -2,33 +2,33 @@
   {
     "id": "may-2022",
     "title": "SeattleJS May 2022",
-    "date": "2022-10-12",
+    "date": "2022-05-11",
     "sponsors": ["collective-seattle"],
     "talks": ["amber-hoak-may-2022"]
   },
   {
     "id": "june-2022",
     "title": "SeattleJS June 2022",
-    "date": "2022-10-12",
+    "date": "2022-06-08",
     "sponsors": ["collective-seattle"],
     "talks": ["jamund-ferguson-june-2022"]
   },
   {
     "id": "july-2022",
     "title": "SeattleJS July 2022",
-    "date": "2022-10-12",
+    "date": "2022-07-13",
     "sponsors": ["collective-seattle"]
   },
   {
     "id": "august-2022",
     "title": "SeattleJS August 2022",
-    "date": "2022-10-12",
+    "date": "2022-08-10",
     "sponsors": ["collective-seattle"]
   },
   {
     "id": "september-2022",
     "title": "SeattleJS September 2022",
-    "date": "2022-10-12",
+    "date": "2022-09-14",
     "sponsors": ["collective-seattle"],
     "talks": ["rachel-lee-nabors"]
   },
@@ -36,7 +36,7 @@
     "id": "october-2022",
     "title": "SeattleJS October 2022",
     "date": "2022-10-12",
-    "sponsors": ["svb"],
+    "sponsors": ["silicon-valley-bank"],
     "talks": ["rachel-lee-nabors-october-2022"]
   },
   {
@@ -44,7 +44,7 @@
     "title": "SeattleJS November 2022",
     "date": "2022-11-09",
     "sponsors": ["collective-seattle"],
-    "talks": ["matthew-bauer-november-2022", "brian-gershon-november-2022"]
+    "talks": ["matthew-t-bauer-november-2022", "brian-gershon-november-2022"]
   },
   {
     "id": "december-2022",
@@ -70,7 +70,7 @@
     "id": "february-2023",
     "title": "SeattleJS February 2023",
     "date": "2023-02-08",
-    "sponsors": ["collective-seattle", "remix"],
+    "sponsors": ["collective-seattle", "shopify-remix"],
     "talks": [
       "brian-tran-february-2023",
       "lupe-canaviri-maydana-februrary-2023",
