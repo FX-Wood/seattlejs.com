@@ -25,6 +25,10 @@ export default (airtableSpeakers, eventsData) => {
     const airtableEventIds = speaker.get('Events')
     if (airtableEventIds) {
       const airtableEventId = airtableEventIds.slice(-1)
+      if (!(airtableEventId in eventsData)){
+        // handle speakers whose events are assigned but are in the future
+        continue
+      }
       const eventId = eventsData[airtableEventId].id
       const talkId = makeTalkId(speakerId, eventId)
       data.id = talkId
