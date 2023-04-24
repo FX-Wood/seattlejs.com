@@ -11,13 +11,15 @@ import { sortSponsors } from './sponsors.js'
 import { exportData } from './exporters.js'
 
 function main() {
+    const sortedEvents = sortEvents(eventsData)
+    console.log(sortedEvents)
     const sortedSpeakers = sortSpeakers(speakerData)
     const sortedTalks = sortTalks(talksData)
     const sortedSponsors = sortSponsors(sponsorsData)
 
-    exportData(sortedSpeakers, "speakers")
-    exportData(sortedTalks, "talks")
-    exportData(sortedSponsors, "sponsors")
+    //exportData(sortedSpeakers, "speakers")
+    //exportData(sortedTalks, "talks")
+    //exportData(sortedSponsors, "sponsors")
 }
 main()
 
