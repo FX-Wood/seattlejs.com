@@ -14,6 +14,22 @@ const talkShape = {
   type: '' // 'lightning' || 'regular'
 }
 
+export const sortTalks = (talks) => {
+    return talks.sort((a,b) => {
+
+        if (a.event_id !== b.event_id) {
+            return new Date(a.event_id) > new Date(b.event_id) ? 1 : -1
+        }
+        if (a.type !== b.type) {
+            return a.type === 'regular' ? 1 : -1
+        }
+        // preserve the order we put the talks in if 
+        // they are from the same event and are the same
+        // type
+        return 0
+    })
+}
+
 export default (airtableSpeakers, eventsData) => {
   const talksData = []
   const eventsTalksMap = {}

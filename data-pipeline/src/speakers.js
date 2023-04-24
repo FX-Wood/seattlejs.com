@@ -17,6 +17,11 @@ const photoShape = {
   filename: ''
 }
 
+export const sortSpeakers = (speakers) => {
+    // heaven forbid there should be the same speaker twice
+    return speakers.sort((a, b) => a.name > b.name ? 1 : -1)
+}
+
 export default airtableSpeakers => {
   const speakersData = []
   const speakersImages = []
@@ -48,3 +53,4 @@ export default airtableSpeakers => {
   }
   return { speakersData, speakersImages }
 }
+

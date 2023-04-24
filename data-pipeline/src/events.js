@@ -1,5 +1,4 @@
 import { makeEventId } from './normalizers.js'
-import { isFuture } from 'date-fns'
 
 const eventsShape = {
   id: '',
@@ -11,7 +10,14 @@ const eventsShape = {
 }
 
 const eventInFuture = eventDate => {
-  return isFuture(new Date(eventDate))
+  return new Date(eventDate) > new Date()
+}
+
+export const sortEvents = (events) => {
+    const sorted = events.sort((a, b) => {
+        return Date(a.date) > Date(b.date)
+    })
+    return sorted
 }
 
 export default airtableEvents => {
