@@ -1,5 +1,4 @@
 import prompts from 'prompts'
-import fs from 'fs/promises'
 import { Record, FieldSet } from 'airtable'
 
 const MONTHS_PRIOR_LIMIT = 1
@@ -18,11 +17,6 @@ const getDateMonthsInFuture = (monthsInFuture: number): Date => {
     return d
 }
 
-interface Choice {
-    title: string,
-    value: Record<FieldSet>
-}
-
 export const getTargetEvent = async (airtableEvents: Record<FieldSet>[]): Promise<Record<FieldSet>> => {
     // reduce number of events to limit, taking most recent
     const someMonthsAgo = getDateMonthsAgo(MONTHS_PRIOR_LIMIT)
@@ -35,7 +29,7 @@ export const getTargetEvent = async (airtableEvents: Record<FieldSet>[]): Promis
         }
     }
     // prompt user which one they want
-    const choices: Choice[] = recentEvents.map(ev => ({ title: ev.get('Name'), value: ev }))
+    const choices: { title: string, value: Record<FieldSet> }[] = recentEvents.map(ev => ({ title: ev.get('Name'), value: ev }))
     const choice = await prompts({
        type: 'select',
        name: 'eventChoice',
@@ -44,6 +38,6 @@ export const getTargetEvent = async (airtableEvents: Record<FieldSet>[]): Promis
     })
     // return selected event
     console.log(choice)
-    return choice.eventChoice.value
+    return choice.eventChoice
 }
 
