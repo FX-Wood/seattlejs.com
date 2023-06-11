@@ -16,7 +16,7 @@ const eventInFuture = eventDate => {
 export const sortEvents = (events) => {
     const sorted = events.sort((a, b) => {
         // don't make date objects in a sort function
-        return Date(a.date) > Date(b.date) ? -1 : 1
+        return new Date(a.date) > new Date(b.date) ? -1 : 1
     })
     return sorted
 }

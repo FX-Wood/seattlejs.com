@@ -10,6 +10,7 @@ import mapSpeakers from './src/speakers.js'
 import mapTalks from './src/talks.js'
 import mapSponsors from './src/sponsors.js'
 import { exportImages, exportData } from './src/exporters.js'
+import { getTargetEvent, eventExists } from './src/cli.js'
 
 dotenv.config()
 
@@ -23,6 +24,16 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const airtableEvents = await getAirtableEvents(airtableBase)
   const airtableSpeakers = await getAirtableSpeakers(airtableBase)
   const airtableSponsors = await getAirtableSponsors(airtableBase)
+  // prompt user for which event they want
+  const event = await getTargetEvent(airtableEvents)
+  // check if event exists already
+  if (eventExists) {
+    console.log('yahoo')
+  } else {
+    console.log('wahoo')
+  }
+  
+  // check if speakers exist already
   // handle speaker objects
   const { speakersData, speakersImages } = mapSpeakers(airtableSpeakers)
   await exportImages(speakersImages, 'speakers')

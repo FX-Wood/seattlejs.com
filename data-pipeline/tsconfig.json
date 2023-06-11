@@ -1,0 +1,15 @@
+ {
+   "compilerOptions": {
+     "module":"NodeNext",
+     "target": "es6",
+     "checkJs": false,
+     "esModuleInterop": true,
+     "outDir": "out",
+     "sourceMap": true,
+     "moduleResolution": "nodenext",
+     "resolveJsonModule": true
+   },
+   "exclude": [
+     "node_modules"
+   ]
+ }

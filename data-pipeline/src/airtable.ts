@@ -1,16 +1,16 @@
 export const getAirtableEvents = async airtableBase => {
   const eventsId = process.env.EVENTS_TABLE_ID
   const events = []
-  await airtableBase(eventsId)
-    // grid view omits RSVPs, which is a very verbose field
-    .select({ view: 'Grid view', sort: [{ field: 'Date', direction: 'asc' }] })
-    .eachPage(function page(records, fetchNextPage) {
-      records.forEach(r => {
-        events.push(r)
+    await airtableBase(eventsId)
+      // grid view omits RSVPs, which is a very verbose field
+      .select({ view: 'Grid view', sort: [{ field: 'Date', direction: 'asc' }] })
+      .eachPage(function page(records, fetchNextPage) {
+        records.forEach(r => {
+          events.push(r)
+        })
+        fetchNextPage()
       })
-      fetchNextPage()
-    })
-  return events
+      return events
 }
 
 export const getAirtableSpeakers = async airtableBase => {
