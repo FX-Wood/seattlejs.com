@@ -1,0 +1,47 @@
+{
+  "name": "seattlejs-data-pipeline",
+  "version": "1.0.0",
+  "description": "data pipeline for producing seattlejs website data",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "pipeline": "node --no-experimental-fetch index.js && pushd .. && npm run lint && popd",
+    "lint": "prettier ./index.js ./src --write && eslint ./index.js ./src --fix"
+  },
+  "dependencies": {
+    "airtable": "^0.11.6",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "jimp": "^0.22.4",
+    "prompts": "^2.4.2",
+    "yargs": "^17.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-config-prettier": "^4.2.1",
+    "mocha": "^10.2.0",
+    "prettier": "2.8.3"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ],
+    "ignorePatterns": [],
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2022
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seattlejs/seattlejs.com.git"
+  },
+  "keywords": [
+    "seattlejs"
+  ]
+}
