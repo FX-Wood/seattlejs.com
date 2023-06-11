@@ -1,4 +1,6 @@
 import { makeEventId } from './normalizers.js'
+import { Record, FieldSet } from 'airtable'
+import fs from 'fs/promises'
 
 const eventsShape = {
   id: '',
@@ -21,6 +23,22 @@ export const sortEvents = (events) => {
     return sorted
 }
 
+/** Tests if an airtable event exists in the website json */
+export const eventExists = async (airtableEvent: Record<FieldSet>): Promise<boolean> => {
+    let exists = false
+    const targetEventDate = new Date(String(airtableEvent.get('Date')))
+    const targetEventMonth = targetEventDate.toLocaleString('en-US', {month:'long'})
+    const existingEventsJSON: Buffer = await fs.readFile('../../app/data/events.json')
+    const existingEvents = JSON.parse(existingEventsJSON.toString())
+    for (let event of existingEvents) {
+        if (targetEventMonth.toLowerCase() in event.id.toLowerCase()) {
+            exists = true
+        }
+    }
+    return exists
+}
+
+
 export default airtableEvents => {
   const eventsData = {}
   for (let event of airtableEvents) {
@@ -42,3 +60,4 @@ export default airtableEvents => {
   }
   return eventsData
 }
+

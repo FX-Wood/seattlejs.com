@@ -47,17 +47,3 @@ export const getTargetEvent = async (airtableEvents: Record<FieldSet>[]): Promis
     return choice.eventChoice.value
 }
 
-export const eventExists = async (airtableEvent: Record<FieldSet>): Promise<boolean> => {
-    let exists = false
-    const targetEventDate = new Date(String(airtableEvent.get('Date')))
-    const targetEventMonth = targetEventDate.toLocaleString('en-US', {month:'long'})
-    const existingEventsJSON: Buffer = await fs.readFile(EVENTS_JSON_FILE_LOCATION)
-    const existingEvents = JSON.parse(existingEventsJSON.toString())
-    for (let event of existingEvents) {
-        if (targetEventMonth.toLowerCase() in event.id.toLowerCase()) {
-            exists = true
-        }
-    }
-    return exists
-}
-

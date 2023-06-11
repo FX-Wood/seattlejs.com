@@ -5,12 +5,12 @@ import {
   getAirtableSpeakers,
   getAirtableSponsors
 } from './src/airtable.js'
-import mapEvents from './src/events.js'
+import mapEvents, { eventExists } from './src/events.js'
 import mapSpeakers from './src/speakers.js'
 import mapTalks from './src/talks.js'
 import mapSponsors from './src/sponsors.js'
 import { exportImages, exportData } from './src/exporters.js'
-import { getTargetEvent, eventExists } from './src/cli.js'
+import { getTargetEvent } from './src/cli.js'
 
 dotenv.config()
 
