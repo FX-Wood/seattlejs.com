@@ -10,7 +10,7 @@ import {
   getWebsiteSpeakers 
 } from './src/repos/website.js'
 import { eventExists, mapAirtableEventsToWebsiteEvents } from './src/events.js'
-import mapSpeakers, { reconcileSpeakers } from './src/speakers.js'
+import { reconcileSpeakers } from './src/speakers.js'
 import mapTalks from './src/talks.js'
 import mapSponsors from './src/sponsors.js'
 import { exportImages, exportData } from './src/repos/website.js'

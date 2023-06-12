@@ -28,6 +28,11 @@ export type WebsiteSpeaker = {
   twitter?: string
 }
 
+export type SpeakerPhoto = {
+    imageUri: string,
+    filename: string
+}
+
 type WebsiteAirtablePair = {
   website: WebsiteEvent | undefined,
   airtable: Record<FieldSet>
