@@ -4,14 +4,17 @@ import {
   getAirtableEvents,
   getAirtableSpeakers,
   getAirtableSponsors
-} from './src/airtable.js'
+} from './src/repos/airtable.js'
+import { 
+  getWebsiteEvents, 
+  getWebsiteSpeakers 
+} from './src/repos/website.js'
 import { eventExists, mapAirtableEventsToWebsiteEvents } from './src/events.js'
-import mapSpeakers from './src/speakers.js'
+import mapSpeakers, { reconcileSpeakers } from './src/speakers.js'
 import mapTalks from './src/talks.js'
 import mapSponsors from './src/sponsors.js'
-import { exportImages, exportData } from './src/exporters.js'
-import { getTargetEvent } from './src/cli.js'
-import { getWebsiteEvents } from './src/website-data.js'
+import { exportImages, exportData } from './src/repos/website.js'
+import { getTargetEvent } from './src/repos/user-input.js'
 
 dotenv.config()
 
@@ -28,6 +31,7 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const airtableSponsors = await getAirtableSponsors(airtableBase)
   // get the events that are in the website json data
   const websiteEvents = await getWebsiteEvents()
+  const websiteSpeakers = await getWebsiteSpeakers()
 
   // associate all the airtable events with the website events
   const eventMap = mapAirtableEventsToWebsiteEvents(airtableEvents, websiteEvents)
@@ -38,6 +42,7 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   console.log(targetEvent)
   // check if event exists already
   if (targetEvent.website) {
+    reconcileSpeakers(targetEvent, airtableSpeakers, websiteSpeakers)
     // check talks
     
     // check speakers

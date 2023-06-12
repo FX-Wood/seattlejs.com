@@ -1,6 +1,6 @@
 import { makeEventId } from './normalizers.js'
 import { Record, FieldSet } from 'airtable'
-import { WebsiteEvent, WebsiteAirtableMap } from './website-types.js'
+import { WebsiteEvent, WebsiteAirtableMap } from './repos/website-types.js'
 
 const eventInFuture = eventDate => {
   return new Date(eventDate) > new Date()

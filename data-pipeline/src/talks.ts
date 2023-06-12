@@ -5,15 +5,6 @@ import {
   normalizeTalkAbstract
 } from './normalizers.js'
 
-const talkShape = {
-  id: '',
-  speaker_id: '',
-  event_id: '',
-  title: '',
-  abstract: '',
-  type: '' // 'lightning' || 'regular'
-}
-
 export const sortTalks = (talks) => {
     return talks.sort((a,b) => {
 
@@ -31,6 +22,14 @@ export const sortTalks = (talks) => {
 }
 
 export default (airtableSpeakers, eventsData) => {
+  const talkShape = {
+    id: '',
+    speaker_id: '',
+    event_id: '',
+    title: '',
+    abstract: '',
+    type: '' // 'lightning' || 'regular'
+  }
   const talksData = []
   const eventsTalksMap = {}
   for (let speaker of airtableSpeakers) {

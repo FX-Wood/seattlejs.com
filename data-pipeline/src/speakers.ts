@@ -1,20 +1,27 @@
+import { Record, FieldSet } from 'airtable'
 import {
   normalizeTwitterHandle,
   makeSpeakerId,
   getFileExtension
 } from './normalizers.js'
+import { WebsiteAirtablePair, WebsiteSpeaker } from './repos/website-types.js'
 
-const speakerShape = {
-  id: '',
-  name: '',
-  company: '',
-  photo: '',
-  twitter: ''
-}
-
-const photoShape = {
-  image: '',
-  filename: ''
+export const reconcileSpeakers = (event: WebsiteAirtablePair,
+                                  airtableSpeakers: Record<FieldSet>[],
+                                  websiteSpeakers: WebsiteSpeaker[]
+                                 ) => {
+  // make new website speakers
+  const newSpeakers = []
+  for (let speakerId of event.airtable.get('Speakers') as string[]) {
+    newSpeakers.push(airtableSpeakers.find(speaker => speakerId == speaker.id))
+  }
+  for (let speaker of newSpeakers) {
+    const id = makeSpeakerId(speaker.get('Full Name'))
+    const existingSpeaker = websiteSpeakers.find(webSpeaker => webSpeaker.id == id)
+    console.log(existingSpeaker)
+  }
+  // check if they exist on website
+  // if they don't, add them
 }
 
 export const sortSpeakers = (speakers) => {
@@ -23,6 +30,17 @@ export const sortSpeakers = (speakers) => {
 }
 
 export default airtableSpeakers => {
+  const speakerShape = {
+    id: '',
+    name: '',
+    company: '',
+    photo: '',
+    twitter: ''
+  }
+  const photoShape = {
+    image: '',
+    filename: ''
+  }
   const speakersData = []
   const speakersImages = []
   for (let speaker of airtableSpeakers) {

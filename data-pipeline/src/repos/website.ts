@@ -1,13 +1,38 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { WebsiteEvent, WebsiteSpeaker } from './website-types.js'
+
+const IMAGE_BASE = '../public'
+const JSON_BASE = '../app/data'
+
+const IMAGE_DIRS = {
+  speakers: path.join(IMAGE_BASE, 'images/speakers'),
+  sponsors: path.join(IMAGE_BASE, 'images/sponsors')
+}
+
+const JSON_FILES = {
+  events: path.join(JSON_BASE, 'events.json'),
+  speakers: path.join(JSON_BASE, 'speakers.json'),
+  talks: path.join(JSON_BASE, 'talks.json'),
+  sponsors: path.join(JSON_BASE, 'sponsors.json')
+}
+
+const parseJSONFile = async (filePath: string): Promise<any> => {
+  const textBuffer = await fs.readFile(filePath)
+  return JSON.parse(String(textBuffer))
+}
+
+export const getWebsiteEvents = async (): Promise<WebsiteEvent[]> => {
+  return parseJSONFile(JSON_FILES['events'])
+}
+
+export const getWebsiteSpeakers = async (): Promise<WebsiteSpeaker[]> => {
+  return parseJSONFile(JSON_FILES['speakers'])
+}
 
 const sleep = async ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export const exportImages = async (imageObjects, type) => {
-  const IMAGE_DIRS = {
-    speakers: '../public/images/speakers',
-    sponsors: '../public/images/sponsors'
-  }
 
   for (let imageObj of imageObjects) {
     // need to prevent getting rate-limited
@@ -22,12 +47,6 @@ export const exportImages = async (imageObjects, type) => {
 }
 
 export const exportData = async (jsData, type) => {
-  const JSON_FILES = {
-    events: '../app/data/events.json',
-    speakers: '../app/data/speakers.json',
-    talks: '../app/data/talks.json',
-    sponsors: '../app/data/sponsors.json'
-  }
   console.log('exporting', JSON_FILES[type])
 
   const json = JSON.stringify(jsData, null, 4)

@@ -1,3 +1,4 @@
+import slugify from "./slugify-import-shim.js"
 export const makeEventId = eventName => {
   if (typeof eventName === 'undefined') {
     return ''
@@ -9,14 +10,8 @@ export const makeTalkId = (speakerId, eventId) => {
   return speakerId + '-' + eventId
 }
 
-export const makeSpeakerId = speakerName => {
-  return (
-    speakerName
-      .toLowerCase()
-      .replaceAll(' ', '-')
-      // remove non-alphanumeric except for '-'
-      .replace(/[^a-z0-9-]/gim, '')
-  )
+export const makeSpeakerId = (speakerName: string): string => {
+  return slugify(speakerName, { lower: true, locale: 'en-us' })
 }
 
 export const normalizeTalkTitle = talkName => {

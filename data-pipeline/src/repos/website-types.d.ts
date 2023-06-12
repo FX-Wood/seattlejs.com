@@ -10,9 +10,26 @@ export type WebsiteEvent = {
   description: string
 }
 
+export type WebsiteTalk = {
+  id: string,
+  speaker_id: string,
+  event_id: string,
+  title: string,
+  abstract: string,
+  type: 'lightning' | 'regular'
+}
+
+export type WebsiteSpeaker = {
+  id: string,
+  name: string,
+  company: string,
+  photo: string,
+  pronouns: string,
+  twitter?: string
+}
 
 type WebsiteAirtablePair = {
-  website: WebsiteEvent,
+  website: WebsiteEvent | undefined,
   airtable: Record<FieldSet>
 }
 
