@@ -16,6 +16,7 @@ export type WebsiteTalk = {
   event_id: string,
   title: string,
   abstract: string,
+  topics: string[],
   type: 'lightning' | 'regular'
 }
 

@@ -11,8 +11,6 @@ import {
 } from './src/repos/website.js'
 import { eventExists, mapAirtableEventsToWebsiteEvents } from './src/events.js'
 import { reconcileSpeakers } from './src/speakers.js'
-import mapTalks from './src/talks.js'
-import mapSponsors from './src/sponsors.js'
 import { exportImages, exportData } from './src/repos/website.js'
 import { getTargetEvent } from './src/repos/user-input.js'
 
@@ -42,11 +40,22 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   console.log(targetEvent)
   // check if event exists already
   if (targetEvent.website) {
-    reconcileSpeakers(targetEvent, airtableSpeakers, websiteSpeakers)
-    // check talks
+    const { 
+        newSpeakers,
+        newPhotos,
+        newTalks
+    } = reconcileSpeakers(targetEvent, airtableSpeakers, websiteSpeakers)
+    if (newSpeakers) {
+        console.log(newSpeakers)
+    }
+    if (newPhotos) {
+        console.log(newPhotos)
+    }
+    if (newTalks) {
+        console.log(newTalks)
+    }
+    // check sponsors
     
-    // check speakers
-
     console.log('yahoo')
   } else {
     console.log('wahoo')

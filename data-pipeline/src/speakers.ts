@@ -4,13 +4,30 @@ import {
   makeSpeakerId,
   getFileExtension
 } from './normalizers.js'
-import { SpeakerPhoto, WebsiteAirtablePair, WebsiteSpeaker } from './repos/website-types.js'
+import { 
+    SpeakerPhoto,
+    WebsiteAirtablePair,
+    WebsiteSpeaker,
+    WebsiteTalk
+} from './repos/website-types.js'
+import { makeWebsiteTalk } from './talks.js'
 
+/** check existing website data against airtable and return any new
+* speakers and/or talks
+*/
 export const reconcileSpeakers = (event: WebsiteAirtablePair,
                                   airtableSpeakers: Record<FieldSet>[],
                                   websiteSpeakers: WebsiteSpeaker[]
-                                 ) => {
-  // get the airtable speakers for the event by their ID
+                                 ): { newSpeakers: WebsiteSpeaker[],
+                                      newPhotos: SpeakerPhoto[],
+                                      newTalks: WebsiteTalk[]
+                                 } => {
+  const returnObject = {
+      newSpeakers: [],
+      newPhotos: [],
+      newTalks: []
+  }
+  // get the airtable speakers for the target event by their ID
   const airtableEventSpeakers = []
   for (let speakerId of event.airtable.get('Speakers') as string[]) {
     airtableEventSpeakers.push(airtableSpeakers.find(speaker => speakerId == speaker.id))
@@ -19,22 +36,21 @@ export const reconcileSpeakers = (event: WebsiteAirtablePair,
     const id = makeSpeakerId(speaker.get('Full Name'))
     const websiteSpeaker = websiteSpeakers.find(webSpeaker => webSpeaker.id == id)
     if (!websiteSpeaker) {
-        // make speaker object
+        // make speaker object and get photo uri
         const { speaker: newSpeaker, speakerPhoto: newPhoto } = makeWebsiteSpeaker(speaker)
-        // download photo
-        console.log(newPhoto)
+        // this is kind of a hack, I'd rather put this in the controlling
+        // code, but it will work for now. It's somewhat okay because airtable
+        // only has a speaker model, and the talks live on the speaker model there.
+        const newTalk = makeWebsiteTalk(speaker, event.airtable)
+        returnObject.newSpeakers.push(newSpeaker)
+        returnObject.newPhotos.push(newPhoto)
+        returnObject.newTalks.push(newTalk)
     }
   }
-
-  // check if they exist on website
-  // if they don't, add them
+  return returnObject
 }
 
-export const sortSpeakers = (speakers) => {
-    // heaven forbid there should be the same speaker twice
-    return speakers.sort((a, b) => a.name > b.name ? 1 : -1)
-}
-
+/** make a website speaker from an airtable speaker */
 const makeWebsiteSpeaker = (airtableSpeaker: Record<FieldSet>
                         ): { speaker: WebsiteSpeaker, speakerPhoto: SpeakerPhoto } => {
     const speaker = {} as WebsiteSpeaker
@@ -56,20 +72,11 @@ const makeWebsiteSpeaker = (airtableSpeaker: Record<FieldSet>
       const fileName = `${id}.${fileExtension}`
       speakerPhoto.filename = fileName
     }
+    speaker.photo = speakerPhoto.filename
     return { speaker, speakerPhoto }
 }
-export default airtableSpeakers => {
-  const speakersData = []
-  const speakersImages = []
-  for (let airtableSpeaker of airtableSpeakers) {
-    const { speaker, speakerPhoto } = makeWebsiteSpeaker(airtableSpeaker)
-    if (speakerPhoto.imageUri === '' || typeof speakerPhoto.imageUri === 'undefined') {
-      console.log(`There was a problem with ${speaker.name}'s image`)
-    } else {
-      speakersImages.push(speakerPhoto)
-    }
-    speakersData.push(speaker)
-  }
-  return { speakersData, speakersImages }
-}
 
+export const sortSpeakers = (speakers) => {
+    // heaven forbid there should be the same speaker twice
+    return speakers.sort((a, b) => a.name > b.name ? 1 : -1)
+}

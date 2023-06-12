@@ -1,9 +1,28 @@
+import { Record, FieldSet } from 'airtable'
 import {
   makeSpeakerId,
   makeTalkId,
   normalizeTalkTitle,
-  normalizeTalkAbstract
+  normalizeTalkAbstract,
+  makeEventId
 } from './normalizers.js'
+import { WebsiteTalk } from './repos/website-types.js'
+
+export const makeWebsiteTalk = (airtableSpeaker: Record<FieldSet>,
+                             airtableEvent: Record<FieldSet>):WebsiteTalk => {
+  const talk = {} as WebsiteTalk
+  const speakerId = makeSpeakerId(airtableSpeaker.get('Full Name') as string)
+  const eventId = makeEventId(airtableEvent.get('Name') as string)
+  const id = makeTalkId(speakerId, eventId)
+  talk.id = id
+  talk.speaker_id = speakerId
+  talk.event_id = eventId
+  talk.title = airtableSpeaker.get('Talk Title') as string
+  talk.abstract = airtableSpeaker.get('Talk Blurb') as string
+  talk.topics = airtableSpeaker.get('Topics') as string[]
+  talk.type = airtableSpeaker.get('Talk Type') as 'lightning' | 'regular'
+  return talk
+}
 
 export const sortTalks = (talks) => {
     return talks.sort((a,b) => {
@@ -19,53 +38,4 @@ export const sortTalks = (talks) => {
         // type
         return 0
     })
-}
-
-export default (airtableSpeakers, eventsData) => {
-  const talkShape = {
-    id: '',
-    speaker_id: '',
-    event_id: '',
-    title: '',
-    abstract: '',
-    type: '' // 'lightning' || 'regular'
-  }
-  const talksData = []
-  const eventsTalksMap = {}
-  for (let speaker of airtableSpeakers) {
-    const data = { ...talkShape }
-    const speakerId = makeSpeakerId(speaker.get('Full Name'))
-    // This is actively bad, at some point a speaker might have more than one event.
-    // Here we just take the most recent (hopefully).
-    const airtableEventIds = speaker.get('Events')
-    if (airtableEventIds) {
-      const airtableEventId = airtableEventIds.slice(-1)
-      if (!(airtableEventId in eventsData)){
-        // handle speakers whose events are assigned but are in the future
-        continue
-      }
-      const eventId = eventsData[airtableEventId].id
-      const talkId = makeTalkId(speakerId, eventId)
-      data.id = talkId
-      data.speaker_id = speakerId
-      data.event_id = eventId
-      data.title = normalizeTalkTitle(speaker.get('Talk Title'))
-      data.abstract = normalizeTalkAbstract(speaker.get('Talk Blurb'))
-      const talkType = speaker.get('Talk Type')
-      if (
-        typeof talkType != 'undefined' &&
-        talkType.toLowerCase().includes('lightning')
-      ) {
-        data.type = 'lightning'
-      } else {
-        data.type = 'regular'
-      }
-      talksData.push(data)
-      // in an effort to keep this a pure-ish function, returning a map seems okay,
-      // even if it's not great
-      eventsTalksMap[airtableEventId] = eventsTalksMap[airtableEventId] || []
-      eventsTalksMap[airtableEventId].push(talkId)
-    }
-  }
-  return { talksData, eventsTalksMap }
 }
