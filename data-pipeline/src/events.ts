@@ -1,6 +1,6 @@
 import { makeEventId } from './normalizers.js'
 import { Record, FieldSet } from 'airtable'
-import { WebsiteEvent } from './website-types.js'
+import { WebsiteEvent, WebsiteAirtableMap } from './website-types.js'
 
 const eventInFuture = eventDate => {
   return new Date(eventDate) > new Date()
@@ -27,6 +27,25 @@ export const eventExists = (airtableEvent: Record<FieldSet>, existingEvents: Web
     return exists
 }
 
+/** returns an object where the key is the event id (like "june-2023") 
+* and the value is an object with the corresponding airtable and website events */
+export const mapAirtableEventsToWebsiteEvents = (airtableEvents: Record<FieldSet>[],
+                                                websiteEvents: WebsiteEvent[],
+                                                ): WebsiteAirtableMap => {
+  const result: WebsiteAirtableMap = {}
+    for (let event of airtableEvents) {
+      const name = event.get('Name')
+      const id = makeEventId(name)
+      const match = websiteEvents.find(e => e.id == id)
+      result[id] = {
+          website: match,
+          airtable: event
+      }
+    }
+    return result
+}
+
+                                             
 export default airtableEvents => {
   const eventsData = {}
   for (let event of airtableEvents) {
@@ -34,7 +53,7 @@ export default airtableEvents => {
     const date = event.get('Date')
     const description = event.get('Description') || ''
     const id = makeEventId(name)
-    const data: WebsiteEvent = {
+    const data= {
       id: id,
       title: name,
       date: date,

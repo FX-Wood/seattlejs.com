@@ -5,7 +5,7 @@ import {
   getAirtableSpeakers,
   getAirtableSponsors
 } from './src/airtable.js'
-import mapEvents, { eventExists } from './src/events.js'
+import { eventExists, mapAirtableEventsToWebsiteEvents } from './src/events.js'
 import mapSpeakers from './src/speakers.js'
 import mapTalks from './src/talks.js'
 import mapSponsors from './src/sponsors.js'
@@ -28,10 +28,19 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const airtableSponsors = await getAirtableSponsors(airtableBase)
   // get the events that are in the website json data
   const websiteEvents = await getWebsiteEvents()
+
+  // associate all the airtable events with the website events
+  const eventMap = mapAirtableEventsToWebsiteEvents(airtableEvents, websiteEvents)
+  console.log('heyyyyy')
   // prompt user for which event they want to make/modify
-  const targetEvent = await getTargetEvent(airtableEvents)
+  const targetEvent = await getTargetEvent(eventMap)
+  console.log('target event')
+  console.log(targetEvent)
   // check if event exists already
-  if (eventExists(targetEvent, websiteEvents)) {
+  if (targetEvent.website) {
+    // check talks
+    
+    // check speakers
 
     console.log('yahoo')
   } else {
