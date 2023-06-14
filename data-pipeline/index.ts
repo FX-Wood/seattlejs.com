@@ -12,7 +12,11 @@ import {
   getWebsiteTalks
 } from './src/repos/website.js'
 import { getTargetEvent } from './src/repos/user-input.js'
-import { mapAirtableEventsToWebsiteEvents } from './src/events.js'
+import { 
+    mapAirtableEventsToWebsiteEvents,
+    makeWebsiteEvent,
+    reconcileEvents
+} from './src/events.js'
 import { reconcileSpeakers } from './src/speakers.js'
 import { reconcileSponsors } from './src/sponsors.js'
 import { exportImages, exportData } from './src/repos/website.js'
@@ -39,10 +43,10 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   // associate all the airtable events with the website events
   const eventMap = mapAirtableEventsToWebsiteEvents(airtableEvents, websiteEvents)
   // prompt user for which event they want to make/modify
-  const targetEvent = await getTargetEvent(eventMap)
+  let targetEvent = await getTargetEvent(eventMap)
   // check if event exists already
   if (!targetEvent.website) {
-      // make a new event
+      targetEvent.website = makeWebsiteEvent(targetEvent.airtable)
   }
 
   const { 
@@ -53,6 +57,8 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const {
       newLogos
   } = reconcileSponsors(targetEvent, airtableSponsors, websiteSponsors)
+
+  reconcileEvents(targetEvent, websiteEvents)
       
   await exportImages(newPhotos, 'speakers')
   await exportData(websiteSpeakers, 'speakers')
@@ -60,5 +66,6 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   await exportData(websiteTalks, 'talks')
   await exportData(websiteSponsors, 'sponsors')
   await exportImages(newLogos, 'sponsors')
+  await exportData(websiteEvents, 'events')
 
 })()

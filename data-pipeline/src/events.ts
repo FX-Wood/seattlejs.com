@@ -1,31 +1,40 @@
 import { makeEventId } from './normalizers.js'
 import { Record, FieldSet } from 'airtable'
-import { WebsiteEvent, WebsiteAirtableMap } from './repos/website-types.js'
+import { WebsiteEvent, WebsiteAirtableMap, WebsiteAirtablePair } from './repos/website-types.js'
 
 const eventInFuture = eventDate => {
   return new Date(eventDate) > new Date()
 }
-
-export const sortEvents = (events) => {
-    const sorted = events.sort((a, b) => {
-        // don't make date objects in a sort function
-        return new Date(a.date) > new Date(b.date) ? -1 : 1
-    })
-    return sorted
-}
-
-/** Tests if an airtable event exists in the website json */
-export const eventExists = (airtableEvent: Record<FieldSet>, existingEvents: WebsiteEvent[]): boolean => {
-    let exists = false
-    const targetEventDate = new Date(String(airtableEvent.get('Date')))
-    const targetEventMonth = targetEventDate.toLocaleString('en-US', {month:'long'}).toLowerCase()
-    for (let event of existingEvents) {
-      if (event.id.toLowerCase().includes(targetEventMonth)) {
-          exists = true
-      }
+/** mutates the events json data to include any event updates */
+export const reconcileEvents = (event: WebsiteAirtablePair,
+                                websiteEvents: WebsiteEvent[]): void => {
+    const existingEventIndex = websiteEvents.findIndex(webEvent => webEvent.id == event.website.id)
+    if (existingEventIndex > 0) {
+        // the event exists, need to replace it with the updated one,
+        // which is a clone with some (potentially) updated fields
+        websiteEvents[existingEventIndex] = event.website    
+    } else {
+        websiteEvents.push(event.website)
     }
-    return exists
+    websiteEvents = sortEvents(websiteEvents)
 }
+
+export const makeWebsiteEvent = (airtableEvent: Record<FieldSet>): WebsiteEvent=> {
+    const name = airtableEvent.get('Name') as string || ''
+    const date = airtableEvent.get('Date') as string || ''
+    const description = airtableEvent.get('Description') as string || ''
+    const id = makeEventId(name)
+    const event: WebsiteEvent = {
+        id: id,
+        title: name,
+        date: date,
+        sponsors: [],
+        talks: [],
+        description: description,
+    }
+    return event
+}
+
 
 /** returns an object where the key is the event id (like "june-2023") 
 * and the value is an object with the corresponding airtable and website events */
@@ -45,6 +54,14 @@ export const mapAirtableEventsToWebsiteEvents = (airtableEvents: Record<FieldSet
     return result
 }
 
+export const sortEvents = (events) => {
+    const sorted = events.sort((a, b) => {
+        //TODO: don't make date objects in a sort function 
+        //because it's really slow
+        return new Date(a.date) > new Date(b.date) ? -1 : 1
+    })
+    return sorted
+}
                                              
 export default airtableEvents => {
   const eventsData = {}
