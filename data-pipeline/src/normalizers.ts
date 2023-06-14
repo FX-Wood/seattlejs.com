@@ -62,9 +62,9 @@ export const getFileExtension = fileName => {
   return temp
 }
 
-export const normalizeTalkType = (talkType: string): WebsiteTalkType => {
+export const normalizeTalkType = (talkType: string): 'regular' | 'lightning' => {
     if (talkType.toLowerCase().includes('regular')) {
-      return WebsiteTalkType.regular
+      return 'regular'
     }
-    return WebsiteTalkType.lightning
+    return 'lightning'
 }

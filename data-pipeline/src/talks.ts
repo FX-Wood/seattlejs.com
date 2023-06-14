@@ -5,7 +5,7 @@ import {
   makeEventId,
   normalizeTalkType
 } from './normalizers.js'
-import { WebsiteTalk } from './repos/website-types.js'
+import { WebsiteTalk, WebsiteTalkType } from './repos/website-types.js'
 
 export const makeWebsiteTalk = (airtableSpeaker: Record<FieldSet>,
                              airtableEvent: Record<FieldSet>):WebsiteTalk => {
@@ -13,7 +13,7 @@ export const makeWebsiteTalk = (airtableSpeaker: Record<FieldSet>,
   const speakerId = makeSpeakerId(airtableSpeaker.get('Full Name') as string)
   const eventId = makeEventId(airtableEvent.get('Name') as string)
   const id = makeTalkId(speakerId, eventId)
-  const talkType = normalizeTalkType(airtableSpeaker.get('Talk Type') as string || '')
+  let talkType = normalizeTalkType(airtableSpeaker.get('Talk Type') as string || '')
   talk.id = id
   talk.speaker_id = speakerId
   talk.event_id = eventId
@@ -39,3 +39,4 @@ export const sortTalks = (talks) => {
         return 0
     })
 }
+
