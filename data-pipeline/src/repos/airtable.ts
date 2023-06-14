@@ -1,3 +1,5 @@
+import fs from 'fs/promises'
+
 export const getAirtableEvents = async airtableBase => {
   const eventsId = process.env.EVENTS_TABLE_ID
   const events = []
@@ -39,4 +41,18 @@ export const getAirtableSponsors = async airtableBase => {
       fetchNextPage()
     })
   return sponsors
+}
+
+export const captureAirtableObject = async (airtableObject, exportPath) => {
+  // stolen from https://oprearocks.medium.com/serializing-object-methods-using-es6-template-strings-and-eval-c77c894651f0
+  let replacer = (key, value) => {  
+      // if we get a function give us the code for that function  
+      if (typeof value === 'function') {
+        return value.toString();  
+      }   
+      return value;
+  }
+
+    const jsonData = JSON.stringify(airtableObject, replacer, 2)
+    await fs.writeFile(exportPath, jsonData)
 }

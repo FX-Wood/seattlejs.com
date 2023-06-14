@@ -51,7 +51,7 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
       targetEvent.website = makeWebsiteEvent(targetEvent.airtable)
   }
 
-  const { 
+  const {
       newPhotos,
       updatedSpeakers,
       updatedTalks,
@@ -82,5 +82,4 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   } else {
     console.log('aborting update, have a nice day :)')
   }
-
 })()
