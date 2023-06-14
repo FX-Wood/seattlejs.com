@@ -11,9 +11,8 @@ export const reconcileSponsors = (event: WebsiteAirtablePair,
                            airtableSponsors: Record<FieldSet>[],
                            websiteSponsors: WebsiteSponsor[]
                           ): {
-                              event: WebsiteAirtablePair,
-                              websiteSponsors: WebsiteSponsor[],
                               newLogos: AirtablePhoto[]
+                              updatedSponsors: WebsiteSponsor[],
                           } => {
     const newSponsors: WebsiteSponsor[] = []
     const newLogos: AirtablePhoto[] = []
@@ -33,11 +32,12 @@ export const reconcileSponsors = (event: WebsiteAirtablePair,
         // assume that if the sponsor json doesn't exist the photo doesn't exist
         newLogos.push(newLogo)
     }
-
+    const updatedSponsors: WebsiteSponsor[] = []
     for (let [i, newSponsor] of newSponsors.entries()) {
         // check event json
         if (!event.website.sponsors.includes(newSponsor.id)) {
             event.website.sponsors.push(newSponsor.id)
+            updatedSponsors.push(newSponsor)
         }
         // check sponsor json
         if (websiteSponsors.find(webSponsor => webSponsor.id == newSponsor.id)) {
@@ -46,7 +46,7 @@ export const reconcileSponsors = (event: WebsiteAirtablePair,
             websiteSponsors.push(newSponsor)
         }
     }
-    return { event, websiteSponsors, newLogos }
+    return { newLogos, updatedSponsors }
 }
 
 const makeWebsiteSponsor = (airtableSponsor: Record<FieldSet>

@@ -13,7 +13,6 @@ export const reconcileEvents = (event: WebsiteAirtablePair,
     } else {
         websiteEvents.push(event.website)
     }
-    websiteEvents = sortEvents(websiteEvents)
 }
 
 export const makeWebsiteEvent = (airtableEvent: Record<FieldSet>): WebsiteEvent=> {
@@ -58,4 +57,4 @@ export const sortEvents = (events) => {
     })
     return sorted
 }
-                                             
+

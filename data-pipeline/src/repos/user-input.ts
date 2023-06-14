@@ -1,5 +1,11 @@
 import prompts from 'prompts'
-import { WebsiteAirtableMap, WebsiteAirtablePair } from './website-types.js'
+import { 
+    WebsiteAirtableMap,
+    WebsiteAirtablePair,
+    WebsiteSpeaker,
+    WebsiteSponsor,
+    WebsiteTalk
+} from './website-types.js'
 
 const MONTHS_PRIOR_LIMIT = 1
 const MONTHS_IN_FUTURE_LIMIT = 4
@@ -39,5 +45,22 @@ export const getTargetEvent = async (events: WebsiteAirtableMap): Promise<Websit
     })
     // return selected event
     return choice.eventChoice
+}
+
+export const confirmUpdate = async (updatedSpeakers: WebsiteSpeaker[],
+                                    updatedTalks: WebsiteTalk[],
+                                    updatedSponsors: WebsiteSponsor[],
+                                   ): Promise<boolean> => {
+    const confirmMessage = ['Confirm update:\n']
+    confirmMessage.push(`${updatedSpeakers.length} new speakers\n`)
+    confirmMessage.push(`${updatedTalks.length} new talks\n`)
+    confirmMessage.push(`${updatedSponsors.length} new sponsors\n`)
+    const res = await prompts({
+        type: 'confirm',
+        name: 'confirmUpdate',
+        message: confirmMessage.join(''),
+        initial: true
+    })
+    return res.confirmUpdate
 }
 

@@ -11,7 +11,7 @@ import {
   getWebsiteSponsors,
   getWebsiteTalks
 } from './src/repos/website.js'
-import { getTargetEvent } from './src/repos/user-input.js'
+import { confirmUpdate, getTargetEvent } from './src/repos/user-input.js'
 import { 
     mapAirtableEventsToWebsiteEvents,
     makeWebsiteEvent,
@@ -53,22 +53,34 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
 
   const { 
       newPhotos,
+      updatedSpeakers,
+      updatedTalks,
   } = reconcileSpeakers(targetEvent, airtableSpeakers, websiteSpeakers, websiteTalks)
   
   // check sponsors
   const {
-      newLogos
+      newLogos,
+      updatedSponsors,
   } = reconcileSponsors(targetEvent, airtableSponsors, websiteSponsors)
 
   reconcileEvents(targetEvent, websiteEvents)
-      
-  await exportData(sortSpeakers(websiteSpeakers), 'speakers')
-  await exportImages(newPhotos, 'speakers')
-  await exportData(sortTalks(websiteTalks), 'talks')
 
-  await exportData(sortSponsors(websiteSponsors), 'sponsors')
-  await exportImages(newLogos, 'sponsors')
+  const confirmation = await confirmUpdate(updatedSpeakers,
+                                           updatedTalks,
+                                           updatedSponsors,
+                                          )
+  if (confirmation) {
+    await exportData(sortSpeakers(websiteSpeakers), 'speakers')
+    await exportImages(newPhotos, 'speakers')
+    await exportData(sortTalks(websiteTalks), 'talks')
 
-  await exportData(sortEvents(websiteEvents), 'events')
+    await exportData(sortSponsors(websiteSponsors), 'sponsors')
+    await exportImages(newLogos, 'sponsors')
+
+    await exportData(sortEvents(websiteEvents), 'events')
+    console.log('finished update, have a nice day :)')
+  } else {
+    console.log('aborting update, have a nice day :)')
+  }
 
 })()

@@ -12,17 +12,16 @@ import {
 } from './repos/website-types.js'
 import { makeWebsiteTalk } from './talks.js'
 
-/** mutate event, speaker, and talk objects and get new photos.
-* @return event, speaker, and talk objects with relevant mutations, any new speaker photos
+/** mutate event, speaker, and talk objects in place and get new speaker photos.
+* @return copies of updated speaker and talk objects and any new speaker photos
 */
 export const reconcileSpeakers = (event: WebsiteAirtablePair,
                                   airtableSpeakers: Record<FieldSet>[],
                                   websiteSpeakers: WebsiteSpeaker[],
                                   websiteTalks: WebsiteTalk[]
-                                 ): { event: WebsiteAirtablePair,
-                                      websiteSpeakers: WebsiteSpeaker[],
-                                      websiteTalks: WebsiteTalk[],
-                                      newPhotos: AirtablePhoto[]
+                                 ): { updatedSpeakers: WebsiteSpeaker[],
+                                      newPhotos: AirtablePhoto[],
+                                      updatedTalks: WebsiteTalk[]
                                  } => {
   const newSpeakers = []
   const newPhotos = []
@@ -46,13 +45,16 @@ export const reconcileSpeakers = (event: WebsiteAirtablePair,
     newTalks.push(newTalk)
     // add the new things to the event object
   }
+  const updatedSpeakers: WebsiteSpeaker[] = []
   for (let [i, newSpeaker] of newSpeakers.entries()) {
       if (websiteSpeakers.find(webSpeaker => webSpeaker.id == newSpeaker.id)) {
           newPhotos.splice(i,1)
       } else {
           websiteSpeakers.push(newSpeaker)
+          updatedSpeakers.push(newSpeaker)
       }
   }
+  const updatedTalks: WebsiteTalk[] = []
   for (let newTalk of newTalks) {
       // check if talk exists in events json
       if (!event.website.talks.includes(newTalk.id)) {
@@ -62,10 +64,11 @@ export const reconcileSpeakers = (event: WebsiteAirtablePair,
       // check if talk exists in talks json
       if (!websiteTalks.find(webTalk => webTalk.id == newTalk.id)) {
           websiteTalks.push(newTalk)
+          updatedTalks.push(newTalk)
       }
 
   }
-  return { event, websiteSpeakers, websiteTalks, newPhotos }
+  return { updatedSpeakers, newPhotos, updatedTalks }
 }
 
 /** make a website speaker from an airtable speaker */
