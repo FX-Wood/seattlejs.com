@@ -2,9 +2,6 @@ import { makeEventId } from './normalizers.js'
 import { Record, FieldSet } from 'airtable'
 import { WebsiteEvent, WebsiteAirtableMap, WebsiteAirtablePair } from './repos/website-types.js'
 
-const eventInFuture = eventDate => {
-  return new Date(eventDate) > new Date()
-}
 /** mutates the events json data to include any event updates */
 export const reconcileEvents = (event: WebsiteAirtablePair,
                                 websiteEvents: WebsiteEvent[]): void => {
@@ -35,7 +32,6 @@ export const makeWebsiteEvent = (airtableEvent: Record<FieldSet>): WebsiteEvent=
     return event
 }
 
-
 /** returns an object where the key is the event id (like "june-2023") 
 * and the value is an object with the corresponding airtable and website events */
 export const mapAirtableEventsToWebsiteEvents = (airtableEvents: Record<FieldSet>[],
@@ -58,32 +54,8 @@ export const sortEvents = (events) => {
     const sorted = events.sort((a, b) => {
         //TODO: don't make date objects in a sort function 
         //because it's really slow
-        return new Date(a.date) > new Date(b.date) ? -1 : 1
+        return new Date(a.date) > new Date(b.date) ? 1 : -1
     })
     return sorted
 }
                                              
-export default airtableEvents => {
-  const eventsData = {}
-  for (let event of airtableEvents) {
-    const name = event.get('Name')
-    const date = event.get('Date')
-    const description = event.get('Description') || ''
-    const id = makeEventId(name)
-    const data= {
-      id: id,
-      title: name,
-      date: date,
-      description: description
-    }
-    eventsData[event.id] = data
-    
-    // the website doesn't support having events later than the current one
-    // stop going through the (sorted) events when we get to the next one
-    if (eventInFuture(date)) {
-      break
-    }
-  }
-  return eventsData
-}
-
