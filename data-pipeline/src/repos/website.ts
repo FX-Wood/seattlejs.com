@@ -1,6 +1,11 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { WebsiteEvent, WebsiteSpeaker } from './website-types.js'
+import {
+    WebsiteEvent,
+    WebsiteSpeaker,
+    WebsiteSponsor,
+    WebsiteTalk
+} from './website-types.js'
 
 const IMAGE_BASE = '../public'
 const JSON_BASE = '../app/data'
@@ -29,19 +34,41 @@ export const getWebsiteEvents = async (): Promise<WebsiteEvent[]> => {
 export const getWebsiteSpeakers = async (): Promise<WebsiteSpeaker[]> => {
   return parseJSONFile(JSON_FILES['speakers'])
 }
+export const getWebsiteTalks = async (): Promise<WebsiteTalk[]> => {
+    return parseJSONFile(JSON_FILES['talks'])
+}
+export const getWebsiteSponsors = async (): Promise<WebsiteSponsor[]> => {
+    return parseJSONFile(JSON_FILES['sponsors'])
+}
 
 const sleep = async ms => new Promise(resolve => setTimeout(resolve, ms))
+/** check if if file exists. Stolen from
+* https://futurestud.io/tutorials/node-js-check-if-a-file-exists
+*/
+const exists = async (path: string) => {  
+    try {
+        await fs.access(path)
+        return true
+    } catch {
+        return false
+    }
+} 
 
 export const exportImages = async (imageObjects, type) => {
 
   for (let imageObj of imageObjects) {
     // need to prevent getting rate-limited
     await sleep(250)
-    if (imageObj.image && imageObj.filename) {
+    if (imageObj.imageUri && imageObj.filename) {
       const imageUri = imageObj.image
       const filePath = path.join(IMAGE_DIRS[type], imageObj.filename)
-      console.log('exporting', filePath)
-      await downloadFile(imageUri, filePath)
+      const imageExists = await exists(filePath)
+      if (!imageExists) {
+          console.log('exporting', filePath)
+          await downloadFile(imageUri, filePath)
+      } else {
+          console.log(`${filePath} exists and was not re-exported`)
+      }
     }
   }
 }
