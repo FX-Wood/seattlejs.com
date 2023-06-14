@@ -5,7 +5,7 @@ import {
   makeEventId,
   normalizeTalkType
 } from './normalizers.js'
-import { WebsiteTalk, WebsiteTalkType } from './repos/website-types.js'
+import { WebsiteTalk } from './repos/website-types.js'
 
 export const makeWebsiteTalk = (airtableSpeaker: Record<FieldSet>,
                              airtableEvent: Record<FieldSet>):WebsiteTalk => {

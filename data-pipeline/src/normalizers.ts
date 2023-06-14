@@ -1,5 +1,4 @@
 import slugify from "./slugify-import-shim.js"
-import { WebsiteTalkType } from "./repos/website-types.js"
 export const makeEventId = eventName => {
   if (typeof eventName === 'undefined') {
     return ''
