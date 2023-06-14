@@ -2,9 +2,8 @@ import { Record, FieldSet } from 'airtable'
 import {
   makeSpeakerId,
   makeTalkId,
-  normalizeTalkTitle,
-  normalizeTalkAbstract,
-  makeEventId
+  makeEventId,
+  normalizeTalkType
 } from './normalizers.js'
 import { WebsiteTalk } from './repos/website-types.js'
 
@@ -14,13 +13,14 @@ export const makeWebsiteTalk = (airtableSpeaker: Record<FieldSet>,
   const speakerId = makeSpeakerId(airtableSpeaker.get('Full Name') as string)
   const eventId = makeEventId(airtableEvent.get('Name') as string)
   const id = makeTalkId(speakerId, eventId)
+  const talkType = normalizeTalkType(airtableSpeaker.get('Talk Type') as string || '')
   talk.id = id
   talk.speaker_id = speakerId
   talk.event_id = eventId
-  talk.title = airtableSpeaker.get('Talk Title') as string
-  talk.abstract = airtableSpeaker.get('Talk Blurb') as string
+  talk.title = airtableSpeaker.get('Talk Title') as string || ''
+  talk.abstract = airtableSpeaker.get('Talk Blurb') as string || ''
   talk.topics = airtableSpeaker.get('Topics') as string[]
-  talk.type = airtableSpeaker.get('Talk Type') as 'lightning' | 'regular'
+  talk.type = talkType
   return talk
 }
 

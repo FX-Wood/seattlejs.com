@@ -1,4 +1,5 @@
 import slugify from "./slugify-import-shim.js"
+import { WebsiteTalkType } from "./repos/website-types.js"
 export const makeEventId = eventName => {
   if (typeof eventName === 'undefined') {
     return ''
@@ -59,4 +60,11 @@ export const getFileExtension = fileName => {
     temp = 'jpg'
   }
   return temp
+}
+
+export const normalizeTalkType = (talkType: string): WebsiteTalkType => {
+    if (talkType.toLowerCase().includes('regular')) {
+      return WebsiteTalkType.regular
+    }
+    return WebsiteTalkType.lightning
 }

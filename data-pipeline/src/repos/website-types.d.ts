@@ -32,6 +32,11 @@ type WebsiteAirtableMap = {
   [id: string]: WebsiteAirtablePair
 }
 
+export enum WebsiteTalkType {
+    'lightning',
+    'regular'
+}
+
 export type WebsiteTalk = {
   id: string,
   speaker_id: string,
@@ -39,7 +44,7 @@ export type WebsiteTalk = {
   title: string,
   abstract: string,
   topics: string[],
-  type: 'lightning' | 'regular'
+  type: WebsiteTalkType
 }
 
 export type WebsiteSpeaker = {
