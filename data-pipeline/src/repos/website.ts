@@ -60,7 +60,7 @@ export const exportImages = async (imageObjects, type) => {
     // need to prevent getting rate-limited
     await sleep(250)
     if (imageObj.imageUri && imageObj.filename) {
-      const imageUri = imageObj.image
+      const imageUri = imageObj.imageUri
       const filePath = path.join(IMAGE_DIRS[type], imageObj.filename)
       const imageExists = await exists(filePath)
       if (!imageExists) {
