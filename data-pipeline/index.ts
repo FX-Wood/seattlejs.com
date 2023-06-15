@@ -5,18 +5,18 @@ import {
   getAirtableSpeakers,
   getAirtableSponsors
 } from './src/repos/airtable.js'
-import { 
-  getWebsiteEvents, 
+import {
+  getWebsiteEvents,
   getWebsiteSpeakers,
   getWebsiteSponsors,
   getWebsiteTalks
 } from './src/repos/website.js'
 import { confirmUpdate, getTargetEvent } from './src/repos/user-input.js'
-import { 
-    mapAirtableEventsToWebsiteEvents,
-    makeWebsiteEvent,
-    reconcileEvents,
-    sortEvents
+import {
+  mapAirtableEventsToWebsiteEvents,
+  makeWebsiteEvent,
+  reconcileEvents,
+  sortEvents
 } from './src/events.js'
 import { reconcileSpeakers, sortSpeakers } from './src/speakers.js'
 import { reconcileSponsors, sortSponsors } from './src/sponsors.js'
@@ -43,32 +43,38 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const websiteSponsors = await getWebsiteSponsors()
 
   // associate all the airtable events with the website events
-  const eventMap = mapAirtableEventsToWebsiteEvents(airtableEvents, websiteEvents)
+  const eventMap = mapAirtableEventsToWebsiteEvents(
+    airtableEvents,
+    websiteEvents
+  )
   // prompt user for which event they want to make/modify
   let targetEvent = await getTargetEvent(eventMap)
   // check if event exists already
   if (!targetEvent.website) {
-      targetEvent.website = makeWebsiteEvent(targetEvent.airtable)
+    targetEvent.website = makeWebsiteEvent(targetEvent.airtable)
   }
 
-  const {
-      newPhotos,
-      updatedSpeakers,
-      updatedTalks,
-  } = reconcileSpeakers(targetEvent, airtableSpeakers, websiteSpeakers, websiteTalks)
-  
+  const { newPhotos, updatedSpeakers, updatedTalks } = reconcileSpeakers(
+    targetEvent,
+    airtableSpeakers,
+    websiteSpeakers,
+    websiteTalks
+  )
+
   // check sponsors
-  const {
-      newLogos,
-      updatedSponsors,
-  } = reconcileSponsors(targetEvent, airtableSponsors, websiteSponsors)
+  const { newLogos, updatedSponsors } = reconcileSponsors(
+    targetEvent,
+    airtableSponsors,
+    websiteSponsors
+  )
 
   reconcileEvents(targetEvent, websiteEvents)
 
-  const confirmation = await confirmUpdate(updatedSpeakers,
-                                           updatedTalks,
-                                           updatedSponsors,
-                                          )
+  const confirmation = await confirmUpdate(
+    updatedSpeakers,
+    updatedTalks,
+    updatedSponsors
+  )
   if (confirmation) {
     await exportData(sortSpeakers(websiteSpeakers), 'speakers')
     await exportImages(newPhotos, 'speakers')
