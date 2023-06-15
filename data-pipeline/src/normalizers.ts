@@ -1,4 +1,4 @@
-import slugify from "./slugify-import-shim.js"
+import slugify from './slugify-import-shim.js'
 export const makeEventId = eventName => {
   if (typeof eventName === 'undefined') {
     return ''
@@ -61,9 +61,11 @@ export const getFileExtension = fileName => {
   return temp
 }
 
-export const normalizeTalkType = (talkType: string): 'regular' | 'lightning' => {
-    if (talkType.toLowerCase().includes('regular')) {
-      return 'regular'
-    }
-    return 'lightning'
+export const normalizeTalkType = (
+  talkType: string
+): 'regular' | 'lightning' => {
+  if (talkType.toLowerCase().includes('regular')) {
+    return 'regular'
+  }
+  return 'lightning'
 }
