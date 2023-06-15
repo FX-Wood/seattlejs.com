@@ -5,9 +5,39 @@ import {
   makeEventId,
   normalizeTalkType
 } from './normalizers.js'
-import { WebsiteTalk } from './repos/website-types.js'
+import { WebsiteTalk, WebsiteAirtablePair } from './repos/website-types.js'
+import { getEventSpeakers } from './speakers.js'
 
-export const makeWebsiteTalk = (
+export const reconcileTalks = (
+  event: WebsiteAirtablePair,
+  airtableSpeakers: Record<FieldSet>[],
+  websiteTalks: WebsiteTalk[]
+): WebsiteTalk[] => {
+  const newTalks = []
+  const airtableEventSpeakers = getEventSpeakers(
+    event.airtable,
+    airtableSpeakers
+  )
+  for (let speaker of airtableEventSpeakers) {
+    newTalks.push(makeWebsiteTalk(speaker, event.airtable))
+  }
+  const updatedTalks: WebsiteTalk[] = []
+  for (let newTalk of newTalks) {
+    // check if talk exists in events json
+    if (!event.website.talks.includes(newTalk.id)) {
+      // if it doesn't add it
+      event.website.talks.push(newTalk.id)
+    }
+    // check if talk exists in talks json
+    if (!websiteTalks.find(webTalk => webTalk.id == newTalk.id)) {
+      websiteTalks.push(newTalk)
+      updatedTalks.push(newTalk)
+    }
+  }
+  return updatedTalks
+}
+
+const makeWebsiteTalk = (
   airtableSpeaker: Record<FieldSet>,
   airtableEvent: Record<FieldSet>
 ): WebsiteTalk => {

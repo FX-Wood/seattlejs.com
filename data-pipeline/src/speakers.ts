@@ -7,48 +7,33 @@ import {
 import {
   AirtablePhoto,
   WebsiteAirtablePair,
-  WebsiteSpeaker,
-  WebsiteTalk
+  WebsiteSpeaker
 } from './repos/website-types.js'
-import { makeWebsiteTalk } from './talks.js'
 
-/** mutate event, speaker, and talk objects in place and get new speaker photos.
+/** mutate event and speaker objects in place and get new speaker photos.
  * @return copies of updated speaker and talk objects and any new speaker photos
  */
 export const reconcileSpeakers = (
   event: WebsiteAirtablePair,
   airtableSpeakers: Record<FieldSet>[],
-  websiteSpeakers: WebsiteSpeaker[],
-  websiteTalks: WebsiteTalk[]
+  websiteSpeakers: WebsiteSpeaker[]
 ): {
   updatedSpeakers: WebsiteSpeaker[]
   newPhotos: AirtablePhoto[]
-  updatedTalks: WebsiteTalk[]
 } => {
   const newSpeakers = []
   const newPhotos = []
-  const newTalks = []
-  // get the airtable speakers for the target event by their ID
-  const airtableEventSpeakers = []
-  for (let speakerId of event.airtable.get('Speakers') as string[]) {
-    // cartesian product runtime (O(a * b)), naughty naughty
-    airtableEventSpeakers.push(
-      airtableSpeakers.find(speaker => speakerId == speaker.id)
-    )
-  }
+  // get the speakers for the passed event
+  const airtableEventSpeakers = getEventSpeakers(
+    event.airtable,
+    airtableSpeakers
+  )
   for (let speaker of airtableEventSpeakers) {
     // make speaker object and get photo uri
     const { speaker: newSpeaker, speakerPhoto: newPhoto } =
       makeWebsiteSpeaker(speaker)
-    // this is kind of a hack, I'd rather put this in the controlling
-    // code, but it will work for now. It's somewhat okay because airtable
-    // only has a speaker model, and the talks live on the speaker model there.
-    const newTalk = makeWebsiteTalk(speaker, event.airtable)
     newSpeakers.push(newSpeaker)
-    // assume that if the speaker json doesn't exist then the photo doesn't exist
     newPhotos.push(newPhoto)
-    newTalks.push(newTalk)
-    // add the new things to the event object
   }
   const updatedSpeakers: WebsiteSpeaker[] = []
   for (let [i, newSpeaker] of newSpeakers.entries()) {
@@ -59,20 +44,7 @@ export const reconcileSpeakers = (
       updatedSpeakers.push(newSpeaker)
     }
   }
-  const updatedTalks: WebsiteTalk[] = []
-  for (let newTalk of newTalks) {
-    // check if talk exists in events json
-    if (!event.website.talks.includes(newTalk.id)) {
-      // if it doesn't add it
-      event.website.talks.push(newTalk.id)
-    }
-    // check if talk exists in talks json
-    if (!websiteTalks.find(webTalk => webTalk.id == newTalk.id)) {
-      websiteTalks.push(newTalk)
-      updatedTalks.push(newTalk)
-    }
-  }
-  return { updatedSpeakers, newPhotos, updatedTalks }
+  return { updatedSpeakers, newPhotos }
 }
 
 /** make a website speaker from an airtable speaker */
@@ -100,6 +72,23 @@ const makeWebsiteSpeaker = (
     speaker.photo = speakerPhoto.filename
   }
   return { speaker, speakerPhoto }
+}
+
+/** given an airtable event (which only has speaker ids), return the full speaker
+ * objects
+ */
+export const getEventSpeakers = (
+  airtableEvent,
+  airtableSpeakers
+): Record<FieldSet>[] => {
+  const speakerRecords = []
+  for (let speakerId of airtableEvent.get('Speakers') as string[]) {
+    // cartesian product runtime (O(a * b)), naughty naughty
+    speakerRecords.push(
+      airtableSpeakers.find(speaker => speakerId == speaker.id)
+    )
+  }
+  return speakerRecords
 }
 
 export const sortSpeakers = speakers => {

@@ -15,13 +15,12 @@ import { confirmUpdate, getTargetEvent } from './src/repos/user-input.js'
 import {
   mapAirtableEventsToWebsiteEvents,
   makeWebsiteEvent,
-  reconcileEvents,
-  sortEvents
+  reconcileEvents
 } from './src/events.js'
-import { reconcileSpeakers, sortSpeakers } from './src/speakers.js'
-import { reconcileSponsors, sortSponsors } from './src/sponsors.js'
+import { reconcileSpeakers } from './src/speakers.js'
+import { reconcileSponsors } from './src/sponsors.js'
+import { reconcileTalks } from './src/talks.js'
 import { exportImages, exportData } from './src/repos/website.js'
-import { sortTalks } from './src/talks.js'
 
 dotenv.config()
 
@@ -43,25 +42,32 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
   const websiteSponsors = await getWebsiteSponsors()
 
   // associate all the airtable events with the website events
+  // this is kind of bad because it will miss events that are in
+  // the website but not in airtable. It's not all that bad because
+  // the eventmap isn't used for writing the actual json output, it's
+  // only used to prompt the user for which event they want to modify
   const eventMap = mapAirtableEventsToWebsiteEvents(
     airtableEvents,
     websiteEvents
   )
-  // prompt user for which event they want to make/modify
+
   let targetEvent = await getTargetEvent(eventMap)
-  // check if event exists already
   if (!targetEvent.website) {
     targetEvent.website = makeWebsiteEvent(targetEvent.airtable)
   }
 
-  const { newPhotos, updatedSpeakers, updatedTalks } = reconcileSpeakers(
+  const { newPhotos, updatedSpeakers } = reconcileSpeakers(
     targetEvent,
     airtableSpeakers,
-    websiteSpeakers,
+    websiteSpeakers
+  )
+
+  const updatedTalks = reconcileTalks(
+    targetEvent,
+    airtableSpeakers,
     websiteTalks
   )
 
-  // check sponsors
   const { newLogos, updatedSponsors } = reconcileSponsors(
     targetEvent,
     airtableSponsors,
@@ -76,14 +82,14 @@ const airtableBase = Airtable.base(process.env.BASE_ID)
     updatedSponsors
   )
   if (confirmation) {
-    await exportData(sortSpeakers(websiteSpeakers), 'speakers')
+    await exportData(websiteSpeakers, 'speakers')
     await exportImages(newPhotos, 'speakers')
-    await exportData(sortTalks(websiteTalks), 'talks')
+    await exportData(websiteTalks, 'talks')
 
-    await exportData(sortSponsors(websiteSponsors), 'sponsors')
+    await exportData(websiteSponsors, 'sponsors')
     await exportImages(newLogos, 'sponsors')
 
-    await exportData(sortEvents(websiteEvents), 'events')
+    await exportData(websiteEvents, 'events')
     console.log('finished update, have a nice day :)')
   } else {
     console.log('aborting update, have a nice day :)')
