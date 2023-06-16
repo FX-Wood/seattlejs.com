@@ -50,6 +50,15 @@ export const websiteSpeakers = [
     twitter: 'yosola',
     pronouns: 'she/her/ella',
     url: 'https://www.linkedin.com/in/crissrodriguez/'
+  },
+  {
+    "id": "aiden-bai",
+    "name": "Aiden Bai",
+    "company": "Dimension.dev",
+    "photo": "aiden-bai.jpg",
+    "twitter": "aidenybai",
+    "pronouns": "he/him/his",
+    "url": "https://aidenybai.com"
   }
 ]
 
