@@ -218,14 +218,5 @@
     "abstract": "How can we use the AST to detect unused env vars. Geller is a simple tool to do that. Let's dig into how it works and how it crawls the JS/TS AST.",
     "topics": ["AST", " CI/CD", " Dev Tools"],
     "type": "lightning"
-  },
-  {
-    "id": "michael-fitzgerald-july-2023",
-    "speaker_id": "michael-fitzgerald",
-    "event_id": "july-2023",
-    "title": "Promise Concurrency in JavaScript",
-    "abstract": "Exploring ways to optimize resolving promises in JavasScript. A few slides with concepts and execution of code snippets with barebones performance measurement. Presenting to spark further discussion and generate feedback / input from others, not to lecture as the expert on the matter.",
-    "topics": ["javascript", " promises", " performance", " concurrency"],
-    "type": "lightning"
   }
 ]
