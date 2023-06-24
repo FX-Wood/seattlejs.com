@@ -155,29 +155,5 @@
     "twitter": "yosola",
     "pronouns": "she/her/ella",
     "url": "https://www.linkedin.com/in/crissrodriguez/"
-  },
-  {
-    "id": "geoff-rich",
-    "name": "Geoff Rich",
-    "company": "Ordergroove",
-    "twitter": "geoffrich_",
-    "pronouns": "he/him",
-    "photo": "geoff-rich.jpg"
-  },
-  {
-    "id": "alan-balasundaram",
-    "name": "Alan Balasundaram",
-    "company": "Expert Opinion MD",
-    "twitter": "",
-    "pronouns": "he/him",
-    "photo": "alan-balasundaram.jpg"
-  },
-  {
-    "id": "michael-fitzgerald",
-    "name": "Michael Fitzgerald",
-    "company": "Fresh Consulting",
-    "twitter": "fitzgerald1337",
-    "pronouns": "he/him/his",
-    "photo": "michael-fitzgerald.png"
   }
 ]
